@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration>
+    <classPathEntry
+            location="E:\mybatis\mysql-connector-java-5.1.29.jar" />
+    <context id="context1" targetRuntime="MyBatis3">
+        <property name="javaFileEncoding" value="UTF-8"/>
+        <commentGenerator type="org.mybatis.generator.MyCommentGenerator">
+        </commentGenerator>
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://192.168.5.14:3306/gas"
+                        userId="root" password="123456" />
+        <javaModelGenerator targetPackage="cn.creatoo.model.system"
+                            targetProject="D:\project_idea\platformresources\pr\model\src\main\java\" />
+        <sqlMapGenerator targetPackage="cn.creatoo.mapper.system"
+                         targetProject="D:\project_idea\platformresources\pr\dao\src\main\java\" />
+        <javaClientGenerator targetPackage="cn.creatoo.dao.system"
+            targetProject="D:\project_idea\platformresources\pr\dao\src\main\java\" type="XMLMAPPER" />
+
+      <!--  <table tableName="sys_user" domainObjectName="SysUser"  enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="sys_role" domainObjectName="SysRole"  enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="sys_user_role" domainObjectName="SysUserRole"  enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="sys_permission" domainObjectName="SysPermission"  enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="sys_role_permission" domainObjectName="SysRolePermission"  enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>-->
+
+    </context>
+</generatorConfiguration>

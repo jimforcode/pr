@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+- Sample namespace-based configuration
+-
+-->
+
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+			 xmlns:beans="http://www.springframework.org/schema/beans"
+			 xmlns:context="http://www.springframework.org/schema/context"
+			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			 xsi:schemaLocation="http://www.springframework.org/schema/beans
+			  http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			  http://www.springframework.org/schema/context
+             http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		      http://www.springframework.org/schema/security
+		      http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<debug />
+	<context:component-scan base-package="cn.creatoo"/>
+	<global-method-security pre-post-annotations="enabled" />
+	<http pattern="/static/**" security="none"/>
+	<http pattern="/js/**" security="none"/>
+	<http pattern="/logout" security="none"/>
+
+	<http pattern="/loggedout.jsp" security="none"/>
+	<http pattern="/login.html" security="none"/>
+ 	<http pattern="/sys/login" security="none"/>
+	<!--   解决标签不起效  start-->
+	<beans:bean   class="org.springframework.security.web.access.DefaultWebInvocationPrivilegeEvaluator">
+		<beans:constructor-arg name="securityInterceptor"  ref="myFilterSecurityInterceptor" />
+	</beans:bean>
+	<!--    解决标签不起效  end -->
+	<http auto-config="true" use-expressions="true"  >
+	<!--<http >-->
+		<!--<intercept-url pattern="/secure/extreme/**" access="hasAuthority('supervisor')"/>-->
+		<intercept-url pattern="/sys/**" access="authenticated" />
+		<intercept-url pattern="/index.html" access="authenticated" />
+		<!--
+			Allow all other requests. In a real application you should
+			adopt a whitelisting approach where access is not allowed by default
+		-->
+		<!--<intercept-url pattern="/**" access="permitAll" />-->
+		<intercept-url pattern="/**" access="permitAll" />
+		<!--<form-login />-->
+		<!--	<form-login login-page="/login.jsp" login-processing-url="/user/login.html" always-use-default-target="true"
+                        default-target-url="/e/e.html" authentication-failure-url="/login-failure.jsp" />-->
+
+		<form-login login-page="/login.html"    always-use-default-target="true"
+					default-target-url="/index.html" authentication-failure-url="/login-failure.jsp" />
+		 <logout   logout-success-url="/login.html" delete-cookies="JSESSIONID"/>
+
+
+		<csrf disabled="true"    />
+
+
+		<custom-filter ref="myFilterSecurityInterceptor" before="FILTER_SECURITY_INTERCEPTOR"></custom-filter>
+		<!--
+            Uncomment to enable X509 client authentication support
+                <x509 />
+        -->
+		<!-- Uncomment to limit the number of sessions a user can have -->
+		<session-management invalid-session-url="/login.html">
+			<concurrency-control max-sessions="1" error-if-maximum-exceeded="true" />
+		</session-management>
+		<access-denied-handler ref="accessDeniedHandler"></access-denied-handler>	</http>
+	<beans:bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+	<beans:bean id="myUserDetailsService"
+				class="cn.creatoo.security.MyUserDetailsService">
+ 	</beans:bean>
+	<authentication-manager alias="myAuthenticationManager">
+ 		<authentication-provider user-service-ref="myUserDetailsService">
+			<password-encoder  ref="encoder" />
+		</authentication-provider>
+	</authentication-manager>
+	<beans:bean class="cn.creatoo.security.CustomAccessDecisionManager" id="customAccessDecisionManager"></beans:bean>
+	<beans:bean class="cn.creatoo.security.CustomSecurityMetadataSource" id="customSecurityMetadataSource">
+       <beans:constructor-arg name="sysRoleMenuService" ref="sysRoleMenuServiceImpl"></beans:constructor-arg>
+	</beans:bean>
+	<beans:bean class="cn.creatoo.security.MyFilterSecurityInterceptor" id="myFilterSecurityInterceptor">
+		<beans:property name="authenticationManager" ref="myAuthenticationManager"></beans:property>
+		<beans:property name="accessDecisionManager" ref="customAccessDecisionManager"></beans:property>
+		<beans:property name="securityMetadataSource" ref="customSecurityMetadataSource"></beans:property>
+	</beans:bean>
+	<beans:bean  id="exceptionTranslationFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
+		<beans:constructor-arg index="0" ref="authenticationEntryPoint"></beans:constructor-arg>
+		<!--<beans:property name="authenticationEntryPoint" ref="authenticationEntryPoint"/>-->
+		<!--	<beans:property name="accessDeniedHandler" ref="accessDeniedHandler"/>-->
+	</beans:bean>
+	<beans:bean  id="authenticationEntryPoint"  class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint" >
+		<beans:constructor-arg index="0"  value="/login.html"></beans:constructor-arg>
+		<!--<beans:property name="loginFormUrl" value="/login.jsp"/>-->
+	</beans:bean>
+	<beans:bean id="accessDeniedHandler"
+				class="cn.creatoo.security.CustomAccessDeniedHandler">
+		<beans:property name="errorPage" value="/deny.jsp"/>
+	</beans:bean>
+    <!--  spring 上下文获取 -->
+	<beans:bean class="cn.creatoo.common.utils.SpringContextUtil"></beans:bean>
+</beans:beans>
